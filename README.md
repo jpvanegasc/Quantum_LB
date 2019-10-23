@@ -2,7 +2,7 @@
 
 A study of the Lattice-Boltzmann equation for quantum systems
 
-# Authors 
+## Authors 
 * Juan Bernardo Benavides
 * Christian Alejandro Riaño
 * Juan Pablo Vanegas
