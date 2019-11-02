@@ -1,3 +1,5 @@
 *a.out
 *.png
 *.pdf
+*.vscode
+*.dSYM
