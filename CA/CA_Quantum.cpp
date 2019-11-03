@@ -11,7 +11,7 @@ const double q= 0.5;
 
 class Automata{
 	private:
-		double juan[Lx][2];
+		std::complex<double> juan[Lx][2];
 		double pablo[Lx][2];
 	public:
 		Automata(void);
@@ -36,17 +36,18 @@ Automata::Automata(void)
 {
 	for(int i=0; i<Lx; i++)
 		for (int j=0; j<2; j++){
-			juan[i][j] = 0;
+			juan[i][j] = complex <double>(0, 0);
 			if(i==15 || i==16)
-				juan[i][j] = 1.0;
+				juan[i][j] = complex <double>(1.0, 0);
+
 	}
 }
 void Automata::normalize(void)
 {
-	double sum = 0, rsum;
+	std::complex <double> sum (0,0) , rsum;
 
 	for (int i=0; i<Lx; i++){
-			sum += (juan[i][0]+juan[i][1])*(juan[i][0]+juan[i][1]);
+			sum += std::norm(juan[i][0]+juan[i][1]);
 	}
 
 	rsum= sqrt(sum);
