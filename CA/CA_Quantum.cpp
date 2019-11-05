@@ -6,70 +6,76 @@
 #include"Random64.h"
 
 const int Lx = 30;
-const double p= 0.5;
-const double q= 0.5;
 
 class Automata{
 	private:
-		std::complex<double> juan[Lx][2];
-		double pablo[Lx][2];
+		std::complex<double> juan[Lx];
 	public:
 		Automata(void);
 		void normalize(void);
 		void collision(void);
 		void advection(void);
 		void show(bool PrintNew);
+		void grafique(int t);
 };
 
 int main(void)
 {
 	Automata QuantumStuffBaby;
 
-	QuantumStuffBaby.normalize();
-
-	QuantumStuffBaby.show(false);
+	for(int t=0; t<100; t++){
+		QuantumStuffBaby.collision();
+		QuantumStuffBaby.grafique(t);
+	}
 
 	return 0;
 }
 
 Automata::Automata(void)
 {
-	for(int i=0; i<Lx; i++)
-		for (int j=0; j<2; j++){
-			juan[i][j] = complex <double>(0, 0);
-			if(i==15 || i==16)
-				juan[i][j] = complex <double>(1.0, 0);
+	Crandom ran64(1);
 
+	for(int i=0; i<Lx; i++){
+		juan[i] = complex <double>(ran64.r(), ran64.r());
 	}
+	normalize();
 }
 void Automata::normalize(void)
 {
 	std::complex <double> sum (0,0) , rsum;
 
 	for (int i=0; i<Lx; i++){
-			sum += std::norm(juan[i][0]+juan[i][1]);
+			sum += std::norm(juan[i]);
 	}
 
 	rsum= sqrt(sum);
 	for (int i=0; i<Lx; i++)
-		for(int j=0; j<2; j++){
-			juan[i][j]= juan[i][j]/rsum;
-	}
+		juan[i]= juan[i]/rsum;
+	
 
 }
 void Automata::show(bool PrintNew)
 {
-	if(PrintNew){
-		for (int i=0; i<Lx; i++)
-			std::cout << pablo[i][0] + pablo[i][1] << " | ";
-		std::cout << std::endl;
-	}else{
-		for (int i=0; i<Lx; i++)
-			std::cout <<juan[i][0] + juan[i][1]<< " | ";
-		std::cout << std::endl;
-	}
+	for (int i=0; i<Lx; i++)
+		std::cout << juan[i] << " | ";
+	std::cout << std::endl;
 }
 void Automata::collision(void)
 {
-	//Ni idea como je...
+	double theta = M_PI/3; 
+    complex <double> j (0,1);
+	complex <double> uno (1,0);
+
+    for(int i=0; i<Lx; i += 2){
+		juan[(i-1+Lx)%Lx]= j*sin(theta)*juan[(i-1+Lx)%Lx] + uno* cos(theta)*juan[i];
+		juan [i]= uno* cos(theta)*juan[(i-1+Lx)%Lx] + j*sin(theta)*juan[i];
+	}
+}
+
+void Automata::grafique(int t)
+{
+	for(int i=0; i<Lx; i++){
+		std::cout<< i << "\t" << t << "\t" << std::norm(juan[i]) << "\n";
+	}
+
 }
