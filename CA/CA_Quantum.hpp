@@ -19,18 +19,6 @@ class Automata{
 		void grafique(int t);
 };
 
-int main(void)
-{
-	Automata QuantumStuffBaby;
-
-	for(int t=0; t<100; t++){
-		QuantumStuffBaby.collision();
-		QuantumStuffBaby.grafique(t);
-	}
-
-	return 0;
-}
-
 Automata::Automata(void)
 {
 	Crandom ran64(1);
