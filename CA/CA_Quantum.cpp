@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<cmath>
+#include<complex>
 #include"Random64.h"
 
 const int Lx = 30;
