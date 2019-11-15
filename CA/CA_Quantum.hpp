@@ -6,6 +6,11 @@
 #include"Random64.h"
 
 const int Lx = 30;
+const double theta = M_PI/4.0; 
+const double sin_theta = std::sin(theta);
+const double cos_theta = std::cos(theta);
+const std::complex <double> j (0,1);
+const std::complex <double> uno (1,0);
 
 class Automata{
 	private:
@@ -23,7 +28,11 @@ Automata::Automata(void){
 	Crandom ran64(1);
 	
 	for(int i=0; i<Lx; i++){
-		juan[i] = std::complex <double>(ran64.r(), ran64.r());
+		//double x=ran64.r(), y=ran64.r();
+		double x=0, y=0;
+		if (i==0) x = 1;
+		//if (i==16) x = 1;
+		juan[i] = std::complex <double>(x, y);
 	}
 	normalize();
 }
@@ -39,23 +48,18 @@ void Automata::normalize(void){
 	#pragma omp parallel for
 	for (int i=0; i<Lx; i++)
 		juan[i]= juan[i]/rsum;
-	
-
 }
 void Automata::show(bool PrintNew){
 	for (int i=0; i<Lx; i++)
-		std::cout << juan[i] << " | ";
+		std::cout << juan[i] << "\t|\t";
 	std::cout << std::endl;
 }
 void Automata::collision(void){
-	double theta = M_PI/3; 
-    complex <double> j (0,1);
-	complex <double> uno (1,0);
-
-    for(int i=0; i<Lx; i += 2){
-		juan[(i-1+Lx)%Lx]= j*sin(theta)*juan[(i-1+Lx)%Lx] + uno* cos(theta)*juan[i];
-		juan [i]= uno* cos(theta)*juan[(i-1+Lx)%Lx] + j*sin(theta)*juan[i];
+    for(int i=0; i<Lx; i++){
+		juan[(i-1+Lx)%Lx] = j*sin_theta*juan[(i-1+Lx)%Lx] + uno*cos_theta*juan[i];
+		juan[i] = uno*cos_theta*juan[(i-1+Lx)%Lx] + j*sin_theta*juan[i];
 	}
+	normalize();
 }
 
 void Automata::grafique(int t){
