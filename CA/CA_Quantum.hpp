@@ -19,37 +19,35 @@ class Automata{
 		void grafique(int t);
 };
 
-Automata::Automata(void)
-{
+Automata::Automata(void){
 	Crandom ran64(1);
-
+	
 	for(int i=0; i<Lx; i++){
-		juan[i] = complex <double>(ran64.r(), ran64.r());
+		juan[i] = std::complex <double>(ran64.r(), ran64.r());
 	}
 	normalize();
 }
-void Automata::normalize(void)
-{
-	std::complex <double> sum (0,0) , rsum;
+void Automata::normalize(void){
+	double sum{0}; std::complex <double> rsum (0,0);
 
+	#pragma omp parallel for reduction(+: sum)
 	for (int i=0; i<Lx; i++){
 			sum += std::norm(juan[i]);
 	}
+	rsum = sqrt(sum);
 
-	rsum= sqrt(sum);
+	#pragma omp parallel for
 	for (int i=0; i<Lx; i++)
 		juan[i]= juan[i]/rsum;
 	
 
 }
-void Automata::show(bool PrintNew)
-{
+void Automata::show(bool PrintNew){
 	for (int i=0; i<Lx; i++)
 		std::cout << juan[i] << " | ";
 	std::cout << std::endl;
 }
-void Automata::collision(void)
-{
+void Automata::collision(void){
 	double theta = M_PI/3; 
     complex <double> j (0,1);
 	complex <double> uno (1,0);
@@ -60,8 +58,7 @@ void Automata::collision(void)
 	}
 }
 
-void Automata::grafique(int t)
-{
+void Automata::grafique(int t){
 	for(int i=0; i<Lx; i++){
 		std::cout<< i << "\t" << t << "\t" << std::norm(juan[i]) << "\n";
 	}
