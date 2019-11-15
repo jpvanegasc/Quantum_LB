@@ -3,7 +3,6 @@
 #include<cmath>
 #include <complex> 
 
-#include"Random64.h"
 #include"CA_Quantum.hpp"
 
 
