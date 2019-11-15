@@ -15,7 +15,7 @@ class LatticeBoltzmann{
         double w[Q];
         double f[Lx][Q], f_new[Lx][Q]; 
         // double C[Lx]; // C written as function of x used when the medium velocity is to be changed
-        int V[2][Q]; // V[0][i]=V_ix and V[1][i]=V_iy
+        int V[1][Q]; // V[0][i]=V_ix
     public:
         /* Load vectors w[Q] and V[2][Q] */
         LatticeBoltzmann(void){
