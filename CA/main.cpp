@@ -1,18 +1,18 @@
 #include<iostream>
 #include<fstream>
-#include<cmath>
-#include <complex> 
 
 #include"CA_Quantum.hpp"
 
 
 int main(void)
 {
+	int t_max = 200;
 	Automata QuantumStuffBaby;
 
-	for(int t=0; t<100; t++){
-		QuantumStuffBaby.collision();
+	for(int t=0; t<t_max; t++){
 		QuantumStuffBaby.grafique(t);
+		QuantumStuffBaby.collision();
+		std::cout << "\n";
 	}
 
 	return 0;
