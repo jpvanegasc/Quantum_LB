@@ -7,7 +7,7 @@
 int main(void)
 {
 	int t_max = 200;
-	Automata QuantumStuffBaby;
+	Automata QuantumStuffBaby(1);
 
 	for(int t=0; t<t_max; t++){
 		QuantumStuffBaby.grafique(t);

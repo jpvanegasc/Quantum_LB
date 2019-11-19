@@ -3,7 +3,7 @@ all : main.o
 
 main.o : main.cpp
 	g++ -O2 $< -o $@
-	time ./$@
+	time ./$@ > datos.txt
 
 .PHONY : parallel
 parallel : main.cpp
