@@ -3,7 +3,7 @@
 #include<fstream>
 #include<cmath>
 #include<string>
-#include"Random64.h"
+#include"Random64.hpp"
 
 const int Lx=256;
 const int D=1, Q=3;

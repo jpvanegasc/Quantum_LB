@@ -3,7 +3,7 @@
 #include<cmath>
 #include <complex> 
 
-#include"Random64.h"
+#include"Random64.hpp"
 
 const int Lx = 30;
 
