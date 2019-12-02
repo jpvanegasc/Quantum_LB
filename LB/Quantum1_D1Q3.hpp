@@ -18,48 +18,21 @@ class LatticeBoltzmann{
         double w[Q]; int V[D][Q]; // V[0][i]=V_ix
         double *f = NULL,   *f_new = NULL;
     public:
-        /* Load vectors w[Q] and V[2][Q], initialize f and f_new */
         LatticeBoltzmann(void);
-        /* Delete Pointers */
         ~LatticeBoltzmann();
-        /* */
         int get_1D(int ix);
-        /**
-         * Macro-Variable: Still no idea of wtf is this
-         * @param ix: position on x-axis on which we are calculating
-         */
         double rho(int ix);
-        /**
-         * Macro-Variable: Velocity field of the system we are modeling over the x-axis. 
-         * We define f_i(x_0,t) such that the sum over i in the x direction will be U_x(x_0).
-         * Jx is defined as Ux*rho.
-         * @param ix: position on x-axis on which we are calculating
-         */
         double Jx(int ix);
-        /**
-         * Jx but calculates the sum using f_new. This is useful when debugging
-         */
         double Jx_new(int ix);
-        /**
-         * This is most likely all crap. I'm not certain of what I'm saying here.
-         * Using the LBGK equation and taking d_t/tau as one, f(x_i+d_x,t+d_t) equals this function 
-         * (i.e. f(x_0+d_x,t+d_t)=f_new_i(x_0,t)).
-         * 
-         * @param rho0: macro-variable 
-         * @param U_x0: macro-variable 
-         * @param i: Velocity vector on which we are calculating
-         */
         double f_eq(double rho0, double U_x0, int i);
         void collide(void);
         void propagate(void);
-        /* Initial conditions */
-        /* Unfinished!! */
         void initialize(double Jx0);
         void save(std::string filename);
         void print(void);
 };
 
-/* Load vectors w[Q] and V[2][Q] */
+/* Load vectors w[Q] and V[2][Q], initialize f and f_new */
 LatticeBoltzmann::LatticeBoltzmann(void){
     //Cargar los pesos
     w[0] = 2.0/3.0; 
@@ -70,15 +43,18 @@ LatticeBoltzmann::LatticeBoltzmann(void){
     f = new double[f_size];
     f_new = new double[f_size];
 }
-
+/* Free Memory */
 LatticeBoltzmann::~LatticeBoltzmann(){
     delete[] f; delete[] f_new;
 }
-
+/* */
 int LatticeBoltzmann::get_1D(int ix){
     return ix*Q;
 }
-
+/**
+ * Macro-Variable: Still no idea of wtf is this
+ * @param ix: position on x-axis on which we are calculating
+ */
 double LatticeBoltzmann::rho(int ix){
     double rho = 0; int pos = get_1D(ix);
     for(int i=0; i<Q; i++){
@@ -86,7 +62,12 @@ double LatticeBoltzmann::rho(int ix){
     }
     return rho;
 }
-
+/**
+ * Macro-Variable: Velocity field of the system we are modeling over the x-axis. 
+ * We define f_i(x_0,t) such that the sum over i in the x direction will be U_x(x_0).
+ * Jx is defined as Ux*rho.
+ * @param ix: position on x-axis on which we are calculating
+ */
 double LatticeBoltzmann::Jx(int ix){
     double J_x = 0; int pos = get_1D(ix);
     for(int i=0; i<Q; i++){
@@ -94,7 +75,10 @@ double LatticeBoltzmann::Jx(int ix){
     }
     return J_x;
 }
-
+/**
+ * Jx but calculates the sum using f_new. This is useful when debugging. This is computationally 
+ * better than making a single function and passing use_new as a parameter.
+ */
 double LatticeBoltzmann::Jx_new(int ix){
     double J_x = 0; int pos = get_1D(ix);
     for(int i=0; i<Q; i++){
@@ -102,11 +86,18 @@ double LatticeBoltzmann::Jx_new(int ix){
     }
     return J_x;
 }
-
+/**
+ * This is most likely all crap. I'm not certain of what I'm saying here, but still:
+ * Using the LBGK equation and taking d_t/tau as one, f(x_i+d_x,t+d_t) equals this function 
+ * (i.e. f(x_0+d_x,t+d_t)=f_new_i(x_0,t)).
+ * 
+ * @param rho0: macro-variable 
+ * @param U_x0: macro-variable 
+ * @param i: Velocity vector on which we are calculating
+ */
 double LatticeBoltzmann::f_eq(double rho0, double Ux0, int i){
     return 0;
 }
-
 void LatticeBoltzmann::collide(void){
     double rho0, Ux0; int pos;
     for(int ix=0; ix<Lx; ix++){
@@ -116,7 +107,6 @@ void LatticeBoltzmann::collide(void){
             f_new[pos + i] = UmUtau*f[pos + i] + Utau*f_eq(rho0, Ux0, i);
         }
 }
-
 void LatticeBoltzmann::propagate(void){
     for(int ix=0; ix<Lx; ix++){
         int pos_new = get_1D(ix);
@@ -128,7 +118,8 @@ void LatticeBoltzmann::propagate(void){
         }
     }
 }
-
+/* Initial conditions */
+/* Unfinished!! */
 void LatticeBoltzmann::initialize(double Jx0){
     int ix, i; double mu, sigma, rho0, normalization;
     mu = Lx/2.0; sigma = Lx/10.0;
@@ -141,11 +132,9 @@ void LatticeBoltzmann::initialize(double Jx0){
         }
     }
 }
-
 void LatticeBoltzmann::save(std::string filename){
     double this_=0;
 }
-
 void LatticeBoltzmann::print(void){
     double that = 0;
 }
