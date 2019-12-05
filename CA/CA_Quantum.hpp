@@ -32,8 +32,8 @@ Automata::Automata(unsigned long long seed){
     for(int i=0; i<Lx; i++){
         //double x=ran64.r(), y=ran64.r();
         double x=0, y=0;
-        if (i==0) x = 1;
-        //if (i==16) x = 1;
+        if (i==15) x = 1;
+        if (i==16) x = 1;
         phi[i] = std::complex <double>(x, y);
     }
     normalize();
@@ -57,8 +57,8 @@ void Automata::collision(int i_start){
     for(int i=i_start; i<Lx; i+=2){
         std::complex <double> phi_i = phi[i], phi_i_minus_one = phi[(i-1+Lx)%Lx];
         
-        phi[(i-1+Lx)%Lx] = j*sin_theta*phi_i_minus_one + uno*cos_theta*phi_i;
-        phi[i] = uno*cos_theta*phi_i_minus_one + j*sin_theta*phi_i;
+        phi[(i-1+Lx)%Lx] = sin_theta*(j*phi_i_minus_one) + cos_theta*(uno*phi_i);
+        phi[i] = cos_theta*(uno*phi_i_minus_one) + sin_theta*(j*phi_i);
     }
 }
 void Automata::show(void){

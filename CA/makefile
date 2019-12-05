@@ -8,7 +8,7 @@ main.o : main.cpp
 .PHONY : parallel
 parallel : main.cpp
 	g++ -fopenmp -O2 $<
-	time ./a.out
+	time ./a.out > datos.txt
 
 .PHONY : debug
 debug : main.cpp
