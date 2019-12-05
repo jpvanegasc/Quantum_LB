@@ -20,7 +20,7 @@ class Automata{
     public:
         Automata(unsigned long long seed);
         void normalize(void);
-        void collision(void);
+        void collision(int i_start);
         void advection(void);
         void show(void);
         void grafique(int t);
@@ -53,8 +53,8 @@ void Automata::normalize(void){
 /**
  * Evolves one time step the state vector 
  */
-void Automata::collision(void){
-    for(int i=0; i<Lx; i++){
+void Automata::collision(int i_start){
+    for(int i=i_start; i<Lx; i+=2){
         std::complex <double> phi_i = phi[i], phi_i_minus_one = phi[(i-1+Lx)%Lx];
         
         phi[(i-1+Lx)%Lx] = j*sin_theta*phi_i_minus_one + uno*cos_theta*phi_i;
@@ -63,7 +63,7 @@ void Automata::collision(void){
 }
 void Automata::show(void){
     for (int i=0; i<Lx; i++)
-        std::cout << phi[i] << "\t|\t";
+        std::cout << std::norm(phi[i]) << "\t|\t";
     std::cout << std::endl;
 }
 void Automata::grafique(int t){
