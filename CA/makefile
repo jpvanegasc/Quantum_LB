@@ -2,7 +2,7 @@ DEBUG = -g -Wall -fsanitize=address -fsanitize=leak -fsanitize=undefined
 all : main.o
 
 main.o : main.cpp
-	g++ -O2 $< -o $@
+	g++ -O2 -std=c++11 $< -o $@
 	time ./$@ > datos.txt
 
 .PHONY : parallel

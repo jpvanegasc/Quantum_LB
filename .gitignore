@@ -1,10 +1,5 @@
-*a.out
+*.out
 *.png
-*.pdf
-<<<<<<< HEAD
-*.vscode/
-=======
-*.vscode
-*.dSYM
 *.txt
->>>>>>> Juanber
+*.o
+*.vscode/
