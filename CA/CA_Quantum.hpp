@@ -55,9 +55,9 @@ void Automata::normalize(void){
  */
 void Automata::collision(int i_start){
     for(int i=i_start; i<Lx; i+=2){
-        std::complex <double> phi_i = phi[i], phi_i_minus_one = phi[(i-1+Lx)%Lx];
+        std::complex <double> phi_i = phi[i], phi_i_minus_one = phi[(i+1+Lx)%Lx];
         
-        phi[(i-1+Lx)%Lx] = sin_theta*(j*phi_i_minus_one) + cos_theta*(uno*phi_i);
+        phi[(i+1+Lx)%Lx] = sin_theta*(j*phi_i_minus_one) + cos_theta*(uno*phi_i);
         phi[i] = cos_theta*(uno*phi_i_minus_one) + sin_theta*(j*phi_i);
     }
 }
