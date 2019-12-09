@@ -5,7 +5,7 @@
 
 #include"Random64.hpp"
 
-const int Lx = 30;
+const int Lx = 500;
 
 const double theta = M_PI/4.0; 
 const double sin_theta = std::sin(theta);
@@ -24,16 +24,17 @@ class Automata{
         void advection(void);
         void show(void);
         void grafique(int t);
+        void wave(void);
+        double phi2(int ix){return std::norm(phi[ix]);}
 };
 
 Automata::Automata(unsigned long long seed){
     Crandom ran64(seed);
-    
+    double mu=Lx/2.0, sigma=Lx/20.0;
     for(int i=0; i<Lx; i++){
-        //double x=ran64.r(), y=ran64.r();
+        // Gaussian packet
         double x=0, y=0;
-        if (i==15) x = 1;
-        if (i==16) x = 1;
+        x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*sqrt(2*M_PI));
         phi[i] = std::complex <double>(x, y);
     }
     normalize();
@@ -69,4 +70,10 @@ void Automata::show(void){
 void Automata::grafique(int t){
     for(int i=0; i<Lx; i++)
         std::cout<< i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
+}
+void Automata::wave(void){
+    for (int ix=0; ix<Lx; ix++){
+        std::cout << ix << '\t' << std::norm(phi[ix]) << '\n';
+    }
+    
 }
