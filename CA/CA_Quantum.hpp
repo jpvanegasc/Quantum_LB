@@ -5,7 +5,7 @@
 
 #include"Random64.hpp"
 
-const int Lx = 500;
+const int Lx = 2048;
 
 const double theta = M_PI/4.0; 
 const double sin_theta = std::sin(theta);
@@ -24,7 +24,7 @@ class Automata{
         void advection(void);
         void show(void);
         void grafique(int t);
-        void wave(void);
+        void wave(std::ofstream &file);
         double phi2(int ix){return std::norm(phi[ix]);}
 };
 
@@ -34,7 +34,7 @@ Automata::Automata(unsigned long long seed){
     for(int i=0; i<Lx; i++){
         // Gaussian packet
         double x=0, y=0;
-        x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*sqrt(2*M_PI));
+        x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*std::sqrt(2*M_PI));
         phi[i] = std::complex <double>(x, y);
     }
     normalize();
@@ -71,9 +71,9 @@ void Automata::grafique(int t){
     for(int i=0; i<Lx; i++)
         std::cout<< i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
 }
-void Automata::wave(void){
+void Automata::wave(std::ofstream &file){
     for (int ix=0; ix<Lx; ix++){
-        std::cout << ix << '\t' << std::norm(phi[ix]) << '\n';
+        file << ix << '\t' << std::norm(phi[ix]) << '\n';
     }
     
 }
