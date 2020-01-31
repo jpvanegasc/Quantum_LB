@@ -29,13 +29,13 @@ class Automata{
 };
 
 Automata::Automata(unsigned long long seed){
-    Crandom ran64(seed);
+    CRandom ran64(seed);
     double mu=Lx/2.0, sigma=Lx/20.0;
     for(int i=0; i<Lx; i++){
         // Gaussian packet
-        double x=0, y=0;
-        x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*std::sqrt(2*M_PI));
-        phi[i] = std::complex <double>(x, y);
+        //double x=0, y=0;
+        //x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*std::sqrt(2*M_PI));
+        phi[i] = std::complex <double>(1, 0);
     }
     normalize();
 }
@@ -61,6 +61,7 @@ void Automata::collision(int i_start){
         phi[(i+1+Lx)%Lx] = sin_theta*(j*phi_i_minus_one) + cos_theta*(uno*phi_i);
         phi[i] = cos_theta*(uno*phi_i_minus_one) + sin_theta*(j*phi_i);
     }
+    normalize();
 }
 void Automata::show(void){
     for (int i=0; i<Lx; i++)
