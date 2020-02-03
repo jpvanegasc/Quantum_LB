@@ -15,6 +15,10 @@ class Automata{
         void collide(int start);
         void advect(void);
         void print(std::ofstream &file);
+        void wave(int t, std::ofstream &file);
+        double sigma2(void);
+        double phi2(int ix){return std::norm(phi[ix][0]+phi[ix][1]);}
+        double phi2_new(int ix){return std::norm(phi_new[ix][0]+phi_new[ix][1]);}
 };
 
 Automata::Automata(double mu, double sigma){
@@ -35,8 +39,7 @@ void Automata::normalize(void){
     double norm = 0, norm_new = 0;
     #pragma omp parallel for reduction(+:norm, norm_new)
     for(int ix=0; ix<Lx; ix++){
-        norm += std::norm(phi[ix][0] + phi[ix][1]);
-        norm_new += std::norm(phi_new[ix][0] + phi_new[ix][1]);
+        norm += phi2(ix); norm_new += phi2_new(ix);
     }
     norm = std::sqrt(norm); norm_new = std::sqrt(norm_new);
     if(norm == 0.0) norm = 1.0; if(norm_new == 0.0) norm_new = 1.0;
@@ -61,11 +64,25 @@ void Automata::advect(void){
         phi[(ix-1+Lx)%Lx][1] = phi_new[ix][1];
     }
 }
-
+/* prints wavefunction */
 void Automata::print(std::ofstream &file){
     for(int ix=0; ix<Lx; ix++){
-        std::complex<double> phi_2 = phi[ix][0] + phi[ix][1];
-        file << ix << '\t' << std::norm(phi_2) << '\n';
+        file << ix << '\t' << phi2(ix) << '\n';
     }
     file << std::endl;
+}
+/* splot */
+void Automata::wave(int t, std::ofstream &file){
+    for(int ix=0; ix<Lx; ix++)
+        file << ix << "\t" << t << "\t" << phi2(ix) << "\n";
+}
+/*Standard deviation */
+double Automata::sigma2(void){
+    double mu = 0, sigma_2 = 0;
+    #pragma omp parallel for reduction(+:mu, sigma_2)
+    for(int ix=0; ix<Lx; ix++){
+        mu += ix*phi2(ix); sigma_2 += ix*ix*phi2(ix);
+    }
+    
+    return sigma_2;
 }
