@@ -4,3 +4,8 @@
 *.o
 *.vscode/
 *.dat
+*.aux
+*.log
+*.gz
+*.fls
+*.fdb*

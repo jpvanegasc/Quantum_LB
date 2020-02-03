@@ -1,5 +1,75 @@
-\documentclass{article}
+\documentclass[12pts]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{multicol}
+\usepackage{amsmath}
+
+\title{Estudio de la Ecuación de Lattice-Boltzman Cuántica}
+\author{Juan B. Benavides y Juan P. Vanegas}
+\date{\today}
 
 \begin{document}
-hello texmaker
+\maketitle
+\section{Introducción}\label{sec:intro}
+Desde el inicio de la mecanica cuantica la gente se dio cuenta que analizar sistemas era muy 
+dificil para cualquier cosa que no fuera algo sencillo. Las herramientas computacionales 
+permiten analizar sistemas más complejos, aumentando nuestro conocimiento de la mecanica cuantica.
+\subsection{Autómata Celular}
+Un autómata celular es básicamente una matriz y un conjunto de reglas de evolución.
+
+\subsection{Lattice Boltzmann}
+A partir de la dinámica de gases es posible derivar una relación entre las variables macroscopicas
+de un fluido y una función dada en el punto, $f_i(\textbf{x}, t)$ donde
+
+\begin{equation*}
+    \rho(\textbf{x}, t) = \sum_i f_i(\textbf{x}, t)
+\end{equation*}
+
+\begin{equation*}
+    \rho\textbf{u}(\textbf{x}, t) = \sum_i \textbf{c}_i f_i(\textbf{x}, t)
+\end{equation*}
+
+Discretizando la ecuación de Lattice Boltzmann para el espacio y el tiempo tenemos
+
+\begin{equation*}
+    f_i(\textbf{x}+\textbf{c}_i \Delta t, t+\Delta t) = f_i(\textbf{x}, t) + \Omega_i(\textbf{x}, t)
+\end{equation*}
+
+Donde el operador de colisión $\Omega_i$ más simple es el de Bhatnagar-Gross-Krook (BGK), 
+definido como 
+
+\begin{equation*}
+    \Omega_i = \frac{f_i-f_i^{eq}}{\tau}\Delta t
+\end{equation*}
+
+Donde la función de equilibrio depende del sistema que se quiera modelar (fluidos, difusión, etc.).
+
+
+\section{Metodos para simular MC}
+
+\subsection{Meyer}
+\subsubsection{Automata Celular}
+ Para nuestro 
+caso tomamos una matriz unidimensional, y usando la ecuación de Schrödinger encontramos la 
+regla de evolución 
+\begin{equation}\label{eq:evolution}
+    \phi_{t+1} = matriz*\phi_t
+\end{equation}
+\subsubsection{Lattice Gas}
+Extendiendo nuestro sistema podemos hallar una analogía con un automata celular de difusión
+
+\subsection{Succi}
+ Para nuestro caso, la función de equilibrio es
+\begin{equation*}
+	f_i^{eq} = nofuckingidea
+\end{equation*}
+
+\section{Simulación}
+\section{Resultados}
+\section{Conclusión}
+
+
 \end{document}
