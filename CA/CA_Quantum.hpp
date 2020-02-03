@@ -61,7 +61,6 @@ void Automata::collision(int i_start){
         phi[(i+1+Lx)%Lx] = sin_theta*(j*phi_i_minus_one) + cos_theta*(uno*phi_i);
         phi[i] = cos_theta*(uno*phi_i_minus_one) + sin_theta*(j*phi_i);
     }
-    normalize();
 }
 void Automata::show(void){
     for (int i=0; i<Lx; i++)
