@@ -8,6 +8,9 @@ int main(void){
     Automata QuantumStuffBaby(Lx/2.0, 50);
     int t_max = 2000;
     
+    std::cout << QuantumStuffBaby.mu() << "\n";
+    std::cout << QuantumStuffBaby.sigma2() << "\n";
+
     QuantumStuffBaby.print(result_file1);
     
     for(int t=0; t<t_max; t++){
