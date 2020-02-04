@@ -1,79 +1,81 @@
-#include<iostream>
-#include<fstream>
-#include<cmath>
-#include <complex> 
+#include"Constants.hpp"
 
-#include"Random64.hpp"
-
-const int Lx = 2048;
-
-const double theta = M_PI/4.0; 
-const double sin_theta = std::sin(theta);
-const double cos_theta = std::cos(theta);
-
-const std::complex <double> j (0,1);
-const std::complex <double> uno (1,0);
 
 class Automata{
     private:
         std::complex<double> phi[Lx];
+        std::complex<double> phi_new[Lx];
     public:
-        Automata(unsigned long long seed);
+        Automata(unsigned long long seed, double mu, double sigma);
         void normalize(void);
         void collision(int i_start);
-        void advection(void);
+        void advect(void);
         void show(void);
-        void grafique(int t);
+        void grafique(int t, std::ofstream &file);
         void wave(std::ofstream &file);
         double phi2(int ix){return std::norm(phi[ix]);}
+        double gauss_init(int x, double mu, double sigma);
 };
 
-Automata::Automata(unsigned long long seed){
+Automata::Automata(unsigned long long seed, double mu, double sigma){
     CRandom ran64(seed);
-    double mu=Lx/2.0, sigma=Lx/20.0;
     for(int i=0; i<Lx; i++){
-        // Gaussian packet
-        //double x=0, y=0;
-        //x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*std::sqrt(2*M_PI));
-        phi[i] = std::complex <double>(1, 0);
+        if(i==0) phi[i] = std::complex <double>(1, 0);
+        else phi[i] = std::complex <double>(0, 0);
+        phi_new[i] = std::complex <double>(0, 0);
     }
     normalize();
 }
 void Automata::normalize(void){
-    double sum{0}; std::complex <double> rsum (0,0);
+    double sum{0};
+    double newSum{0};
 
     #pragma omp parallel for reduction(+: sum)
     for (int i=0; i<Lx; i++)
         sum += std::norm(phi[i]);
-    rsum = sqrt(sum);
+    sum = sqrt(sum);
 
     #pragma omp parallel for
     for (int i=0; i<Lx; i++)
-        phi[i]= phi[i]/rsum;
+        phi[i] /= sum;
+
+    #pragma omp parallel for reduction(+: newSum)
+    for (int i=0; i<Lx; i++)
+        newSum += std::norm(phi_new[i]);
+    newSum = sqrt(newSum);
+
+    #pragma omp parallel for
+    for (int i=0; i<Lx; i++)
+        phi_new[i] /= newSum;
 }
 /**
  * Evolves one time step the state vector 
  */
 void Automata::collision(int i_start){
-    for(int i=i_start; i<Lx; i+=2){
-        std::complex <double> phi_i = phi[i], phi_i_minus_one = phi[(i+1+Lx)%Lx];
-        
-        phi[(i+1+Lx)%Lx] = sin_theta*(j*phi_i_minus_one) + cos_theta*(uno*phi_i);
-        phi[i] = cos_theta*(uno*phi_i_minus_one) + sin_theta*(j*phi_i);
+    for(int ix=i_start; ix<Lx; ix+=2){
+        phi_new[(ix-1+Lx)%Lx] = j*sin_theta * phi[(ix-1+Lx)%Lx] + uno*cos_theta*phi[ix];
+        phi_new[ix] = uno*cos_theta*phi[(ix-1+Lx)%Lx] + j*sin_theta * phi[ix];
     }
+}
+void Automata::advect(void){
+    #pragma omp parallel for reduction(+: sum)
+    for (int i=0; i<Lx; i++)
+        phi[i] = phi_new[i];
 }
 void Automata::show(void){
     for (int i=0; i<Lx; i++)
         std::cout << std::norm(phi[i]) << "\t|\t";
     std::cout << std::endl;
 }
-void Automata::grafique(int t){
+void Automata::grafique(int t, std::ofstream &file){
     for(int i=0; i<Lx; i++)
-        std::cout<< i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
+        file << i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
 }
 void Automata::wave(std::ofstream &file){
     for (int ix=0; ix<Lx; ix++){
         file << ix << '\t' << std::norm(phi[ix]) << '\n';
-    }
-    
+    }  
+}
+double Automata::gauss_init(int x, double mu, double sigma){
+    return std::exp(-0.25*(((x-mu)*(x-mu))/(sigma*sigma)));
 }
