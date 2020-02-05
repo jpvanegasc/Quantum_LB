@@ -23,9 +23,12 @@ Automata::Automata(unsigned long long seed, double mu, double sigma){
     double x, xm1;
     xm1= gauss_init(Lx-1, mu, sigma);
     for(int ix=0; ix<Lx; ix++){
-        x = gauss_init((ix-1+Lx)%Lx, mu, sigma);
-        psi[ix][0] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
-        psi[ix][1] = psi_new[ix][0] = psi_new[ix][1] = std::complex <double>(0, 0);
+        //x = gauss_init((ix-1+Lx)%Lx, mu, sigma);
+        //psi[ix][0] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
+        psi[ix][0] = psi_new[ix][0] = psi_new[ix][1] = std::complex <double>(0, 0);
+        if (ix==0) psi[ix][1]=psi[(ix+1+Lx)%Lx][0]= std::complex <double>(1, 0);
+        else psi[ix][1]=psi[(ix+1+Lx)%Lx][0]= std::complex <double>(0, 0);
+        
     }
     normalize();
 }
@@ -49,13 +52,13 @@ void Automata::normalize(void){
  */
 void Automata::collision(int i_start){
     for(int ix=i_start; ix<Lx; ix+=2){
-        psi_new[ix][0]= j*sin_theta * psi[(ix-1+Lx)%Lx][1] + uno*cos_theta*psi[(ix+1+Lx)%Lx][0];
-        psi_new[ix][1] = uno*cos_theta*psi[(ix-1+Lx)%Lx][1] + j*sin_theta * psi[(ix+1+Lx)%Lx][0];
+        psi_new[ix][0]= j*sin_theta * cos_rho* psi[(ix-1+Lx)%Lx][1] + sin_rho*(sin_theta*psi[ix][0]-j*cos_theta*psi[ix][1])+ uno*cos_rho*cos_theta*psi[(ix+1+Lx)%Lx][0];
+        psi_new[ix][1] = uno*cos_theta*psi[(ix-1+Lx)%Lx][1] + sin_rho*(sin_theta*psi[ix][1]-j*cos_theta*psi[ix][0]) + j*sin_theta * psi[(ix+1+Lx)%Lx][0];
     }
 }
 void Automata::advect(int i_start){
     #pragma omp parallel for reduction(+: sum)
-    for (int ix=i_start; ix<Lx; ix+=2){
+    for (int ix=0; ix<Lx; ix++){
         psi[ix][0] = psi_new[(ix-2+Lx)%Lx][0];
         psi[ix][1] = psi_new[(ix+2+Lx)%Lx][1];
     }
