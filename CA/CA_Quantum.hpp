@@ -3,39 +3,29 @@
 #include<cmath>
 #include <complex> 
 
-#include"Random64.hpp"
-
-const int Lx = 2048;
-
-const double theta = M_PI/4.0; 
-const double sin_theta = std::sin(theta);
-const double cos_theta = std::cos(theta);
-
-const std::complex <double> j (0,1);
-const std::complex <double> uno (1,0);
+#include"Constants.hpp"
 
 class Automata{
     private:
         std::complex<double> phi[Lx];
     public:
-        Automata(unsigned long long seed);
+        Automata(double mu, double sigma);
         void normalize(void);
         void collision(int i_start);
         void advection(void);
         void show(void);
-        void grafique(int t);
+        void grafique(int t, std::ofstream &file);
         void wave(std::ofstream &file);
         double phi2(int ix){return std::norm(phi[ix]);}
 };
 
-Automata::Automata(unsigned long long seed){
-    CRandom ran64(seed);
-    double mu=Lx/2.0, sigma=Lx/20.0;
+Automata::Automata(double mu, double sigma){
     for(int i=0; i<Lx; i++){
         // Gaussian packet
-        //double x=0, y=0;
+        double x=0, y=0;
+        if(i==0) x=1;
         //x = (std::exp(-0.5*(((i-mu)*(i-mu))/(sigma*sigma))))/(sigma*std::sqrt(2*M_PI));
-        phi[i] = std::complex <double>(1, 0);
+        phi[i] = std::complex <double>(x, y);
     }
     normalize();
 }
@@ -67,9 +57,9 @@ void Automata::show(void){
         std::cout << std::norm(phi[i]) << "\t|\t";
     std::cout << std::endl;
 }
-void Automata::grafique(int t){
+void Automata::grafique(int t, std::ofstream &file){
     for(int i=0; i<Lx; i++)
-        std::cout<< i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
+        file << i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
 }
 void Automata::wave(std::ofstream &file){
     for (int ix=0; ix<Lx; ix++){
