@@ -9,9 +9,9 @@ int main(void){
     for(int t=0; t<t_max; t++){
         //QuantumStuffBaby.grafique(t, result_file4);
         QuantumStuffBaby.collision(1);
-        QuantumStuffBaby.advect();
+        QuantumStuffBaby.advect(1);
         QuantumStuffBaby.collision(0);
-        QuantumStuffBaby.advect();
+        QuantumStuffBaby.advect(0);
         //result_file4 << "\n";
         if (t==t_max/2) QuantumStuffBaby.wave(result_file2);
     }

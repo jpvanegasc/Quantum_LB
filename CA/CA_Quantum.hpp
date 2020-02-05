@@ -3,8 +3,6 @@
 
 class Automata{
     private:
-        std::complex<double> phi[Lx];
-        std::complex<double> phi_new[Lx];
         std::complex<double> psi[Lx][2];
         std::complex<double> psi_new[Lx][2];
     public:
@@ -12,72 +10,68 @@ class Automata{
         void defPsi(void);
         void normalize(void);
         void collision(int i_start);
-        void advect(void);
+        void advect(int i_start);
         void show(void);
         void grafique(int t, std::ofstream &file);
         void wave(std::ofstream &file);
-        double phi2(int ix){return std::norm(phi[ix]);}
+        double psi2(int ix){return std::norm(psi[ix][0]) + std::norm(psi[ix][1]);}
         double gauss_init(int x, double mu, double sigma);
 };
 
 Automata::Automata(unsigned long long seed, double mu, double sigma){
     CRandom ran64(seed);
-    double x;
+    double x, xm1;
+    xm1= gauss_init(Lx-1, mu, sigma);
     for(int ix=0; ix<Lx; ix++){
-        x = gauss_init(ix, mu, sigma);
-        phi[ix] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
-        phi_new[ix] = psi[ix][0] = psi[ix][1] = psi_new[ix][0] = psi_new[ix][1] = std::complex <double>(0, 0);
+        x = gauss_init((ix-1+Lx)%Lx, mu, sigma);
+        psi[ix][0] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
+        psi[ix][1] = psi_new[ix][0] = psi_new[ix][1] = std::complex <double>(0, 0);
     }
     normalize();
-}
-
-void Automata::defPsi(void){
-    for(int ix=0; ix<Lx; ix++){
-        psi[ix][0]= phi[(ix-1+Lx)%Lx];
-        psi[ix][1]= phi[ix];
-    }
 }
 
 void Automata::normalize(void){
     double sum{0};
     double newSum{0};
-    defPsi();
     #pragma omp parallel for reduction(+: sum)
     for (int i=0; i<Lx; i++)
-        sum += std::norm(psi[i][0]) + std::norm(psi[i][1]);
+        sum += psi2(i);
     sum = sqrt(sum);
 
     #pragma omp parallel for
-    for (int i=0; i<Lx; i++)
-        phi[i] /= sum;
+    for (int i=0; i<Lx; i++){
+        psi[i][0] /= sum;
+        psi[i][1] /= sum;
+    }
 }
 /**
  * Evolves one time step the state vector 
  */
 void Automata::collision(int i_start){
     for(int ix=i_start; ix<Lx; ix+=2){
-        phi_new[(ix-1+Lx)%Lx] = j*sin_theta * phi[(ix-1+Lx)%Lx] + uno*cos_theta*phi[ix];
-        phi_new[ix] = uno*cos_theta*phi[(ix-1+Lx)%Lx] + j*sin_theta * phi[ix];
+        psi_new[ix][0]= j*sin_theta * psi[(ix-1+Lx)%Lx][1] + uno*cos_theta*psi[(ix+1+Lx)%Lx][0];
+        psi_new[ix][1] = uno*cos_theta*psi[(ix-1+Lx)%Lx][1] + j*sin_theta * psi[(ix+1+Lx)%Lx][0];
     }
 }
-void Automata::advect(void){
+void Automata::advect(int i_start){
     #pragma omp parallel for reduction(+: sum)
-    for (int i=0; i<Lx; i++)
-        phi[i] = phi_new[i];
+    for (int ix=i_start; ix<Lx; ix+=2){
+        psi[ix][0] = psi_new[(ix-2+Lx)%Lx][0];
+        psi[ix][1] = psi_new[(ix+2+Lx)%Lx][1];
+    }
 }
 void Automata::show(void){
     for (int i=0; i<Lx; i++)
-        std::cout << std::norm(phi[i]) << "\t|\t";
+        std::cout << psi2(i) << "\t|\t";
     std::cout << std::endl;
 }
 void Automata::grafique(int t, std::ofstream &file){
     for(int i=0; i<Lx; i++)
-        file << i << "\t" << t << "\t" << std::norm(phi[i]) << "\n";
+        file << i << "\t" << t << "\t" << psi2(i) << "\n";
 }
 void Automata::wave(std::ofstream &file){
-    defPsi();
     for (int ix=0; ix<Lx; ix++){
-        file << ix << '\t' << std::norm(psi[ix][0]) + std::norm(psi[ix][1]) << '\n';
+        file << ix << '\t' << psi2(ix) << '\n';
     }  
 }
 double Automata::gauss_init(int x, double mu, double sigma){
