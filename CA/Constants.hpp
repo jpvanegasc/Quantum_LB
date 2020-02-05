@@ -5,8 +5,8 @@
 
 #include"Random64.hpp"
 
-const int Lx = 30;
-const int t_max = 100;
+const int Lx = 2048;
+const int t_max = 2000;
 
 const double theta = M_PI/4.0; 
 const double sin_theta = std::sin(theta);

@@ -21,13 +21,12 @@ class Automata{
 Automata::Automata(unsigned long long seed, double mu, double sigma){
     CRandom ran64(seed);
     double x, xm1;
-    xm1= gauss_init(Lx-1, mu, sigma);
+    //xm1= gauss_init(Lx-1, mu, sigma);
     for(int ix=0; ix<Lx; ix++){
-        //x = gauss_init((ix-1+Lx)%Lx, mu, sigma);
+        x = gauss_init((ix-1+Lx)%Lx, mu, sigma);
         //psi[ix][0] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
-        psi[ix][0] = psi_new[ix][0] = psi_new[ix][1] = std::complex <double>(0, 0);
-        if (ix==0) psi[ix][1]=psi[(ix+1+Lx)%Lx][0]= std::complex <double>(1, 0);
-        else psi[ix][1]=psi[(ix+1+Lx)%Lx][0]= std::complex <double>(0, 0);
+        psi[ix][1] = psi_new[ix][0] = psi_new[ix][1] = std::complex <double>(0, 0);
+        psi[ix][0]=psi[(ix-1+Lx)%Lx][1]= std::complex <double>(x*std::cos(k*ix), -x*std::sin(k*ix));
         
     }
     normalize();
