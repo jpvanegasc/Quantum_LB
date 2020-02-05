@@ -6,14 +6,14 @@
 #include"Random64.hpp"
 
 const int Lx = 30;
-const int t_max = 10;
+const int t_max = 100;
 
 const double theta = M_PI/4.0; 
 const double sin_theta = std::sin(theta);
 const double cos_theta = std::cos(theta);
 const double mass = std::tan(theta);
 
-const double rho = M_PI/6.0; 
+const double rho = 0; 
 const double sin_rho = std::sin(rho);
 const double cos_rho = std::cos(rho);
 
