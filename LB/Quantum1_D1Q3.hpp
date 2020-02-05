@@ -6,7 +6,7 @@
 #include"Random64.hpp"
 
 const int Lx=256;
-const int D=1, Q=3;
+const int D=1, Q=4;
 const int f_size = Lx*Q;
 
 const double tau = 0.55;
