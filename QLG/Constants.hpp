@@ -6,7 +6,9 @@ const int dim = 2;
 
 // m = tan(theta)
 //const double theta = 0.463647609;
-const double theta = 0.197395598;
+//const double theta = 0.197395598;
+//const double theta = M_PI_4;
+const double theta = 0.0996686525;
 const double sin_theta = std::sin(theta);
 const double cos_theta = std::cos(theta);
 

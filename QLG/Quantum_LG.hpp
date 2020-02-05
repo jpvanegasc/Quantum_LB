@@ -17,7 +17,8 @@ class Automata{
         void print(std::ofstream &file);
         void wave(int t, std::ofstream &file);
         double sigma2(void);
-        double phi2(int ix){return std::norm(phi[ix][0]+phi[ix][1]);}
+        //double phi2(int ix){return std::norm(phi[ix][0]+phi[ix][1]);}
+        double phi2(int ix){return std::norm(phi[ix][0])+std::norm(phi[ix][1]);}
         double phi2_new(int ix){return std::norm(phi_new[ix][0]+phi_new[ix][1]);}
 };
 
@@ -26,8 +27,9 @@ Automata::Automata(double mu, double sigma){
 
     #pragma opm parallel for
     for(int ix=0; ix<Lx; ix++){
+        double x=0;
         // Gaussian packet
-        double x = gauss_coef*(std::exp(-0.5*(((ix-mu)*(ix-mu))/(sigma*sigma))));
+        x = (std::exp(-0.25*(((ix-mu)*(ix-mu))/(sigma*sigma))));
         // Gaussian packet times e^-ikx
         phi[ix][0] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
         phi[ix][1] = phi_new[ix][0] = phi_new[ix][1] = std::complex<double> (0, 0);
@@ -45,7 +47,7 @@ void Automata::normalize(void){
     if(norm == 0.0) norm = 1.0; if(norm_new == 0.0) norm_new = 1.0;
 
     for(int ix=0; ix<Lx; ix++){
-        phi[ix][0] /= norm; phi[ix][1]/norm;
+        phi[ix][0] /= norm; phi[ix][1] /= norm;
         phi_new[ix][0] /= norm_new; phi_new[ix][1] /= norm_new;
     }
 }
@@ -67,7 +69,7 @@ void Automata::advect(void){
 /* prints wavefunction */
 void Automata::print(std::ofstream &file){
     for(int ix=0; ix<Lx; ix++){
-        file << ix << '\t' << phi2(ix) << '\n';
+        file << ix << '\t' << std::norm(phi[ix][0]+phi[ix][1]) << '\n';
     }
     file << std::endl;
 }
@@ -81,8 +83,8 @@ double Automata::sigma2(void){
     double mu = 0, sigma_2 = 0;
     #pragma omp parallel for reduction(+:mu, sigma_2)
     for(int ix=0; ix<Lx; ix++){
-        mu += ix*phi2(ix); sigma_2 += ix*ix*phi2(ix);
+        double phi_2 = phi2(ix);
+        mu += ix*phi_2; sigma_2 += ix*ix*phi_2;
     }
-    
-    return sigma_2;
+    return sigma_2 - (mu*mu);
 }
