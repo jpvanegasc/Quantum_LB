@@ -16,6 +16,7 @@ class Automata{
         void advect(void);
         void print(std::ofstream &file);
         void wave(int t, std::ofstream &file);
+        double mu(void);
         double sigma2(void);
         //double phi2(int ix){return std::norm(phi[ix][0]+phi[ix][1]);}
         double phi2(int ix){return std::norm(phi[ix][0])+std::norm(phi[ix][1]);}
@@ -23,13 +24,17 @@ class Automata{
 };
 
 Automata::Automata(double mu, double sigma){
-    double gauss_coef = 1.0/(2*sigma*std::sqrt(2*M_PI));
+    double gauss_coef = 1.0/(std::sqrt(2*M_PI*sigma));
 
     #pragma opm parallel for
     for(int ix=0; ix<Lx; ix++){
         double x=0;
         // Gaussian packet
+<<<<<<< HEAD
         x = (std::exp(-0.25*(((ix-mu)*(ix-mu))/(sigma*sigma))));
+=======
+        double x = gauss_coef*(std::exp(-0.25*(((ix-mu)*(ix-mu))/(sigma*sigma))));
+>>>>>>> 67265b660daf169dc542ad732be0431b97b743da
         // Gaussian packet times e^-ikx
         phi[ix][0] = std::complex<double> (x*std::cos(k*ix), -x*std::sin(k*ix));
         phi[ix][1] = phi_new[ix][0] = phi_new[ix][1] = std::complex<double> (0, 0);
@@ -78,8 +83,17 @@ void Automata::wave(int t, std::ofstream &file){
     for(int ix=0; ix<Lx; ix++)
         file << ix << "\t" << t << "\t" << phi2(ix) << "\n";
 }
+/*Expected value*/
+double Automata::mu(void){
+    double mu = 0;
+    for(int ix=0; ix < Lx; ix ++) {
+        mu += ix * phi2(ix);
+    }
+    return mu;
+}
 /*Standard deviation */
 double Automata::sigma2(void){
+<<<<<<< HEAD
     double mu = 0, sigma_2 = 0;
     #pragma omp parallel for reduction(+:mu, sigma_2)
     for(int ix=0; ix<Lx; ix++){
@@ -87,4 +101,14 @@ double Automata::sigma2(void){
         mu += ix*phi_2; sigma_2 += ix*ix*phi_2;
     }
     return sigma_2 - (mu*mu);
+=======
+    double sigma_2 = 0;
+    double miu = mu();
+    #pragma omp parallel for reduction(+:sigma_2)
+    for(int ix=0; ix < Lx; ix++){
+        sigma_2 += ix*ix*phi2(ix);
+    }
+    
+    return sigma_2 - miu*miu;
+>>>>>>> 67265b660daf169dc542ad732be0431b97b743da
 }
