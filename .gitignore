@@ -9,3 +9,6 @@
 *.gz
 *.fls
 *.fdb*
+*.b*
+!*.bib
+*.xml*
