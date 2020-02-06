@@ -1,75 +1,213 @@
-\documentclass[12pts]{article}
-\usepackage[utf8x]{inputenc}
+\documentclass[12pts, letterpaper, twocolumn]{article}
+\usepackage[utf8]{inputenc}
 \usepackage[spanish, es-tabla]{babel}
+\usepackage{csquotes} %babel asked for this
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{verbatim}
 \usepackage{multicol}
 \usepackage{amsmath}
 
-\title{Estudio de la Ecuación de Lattice-Boltzman Cuántica}
+\usepackage{biblatex}
+\addbibresource{ref.bib}
+
+\title{Simulación de Dinámica Cuántica usando LB}
 \author{Juan B. Benavides y Juan P. Vanegas}
 \date{\today}
 
 \begin{document}
 \maketitle
 \section{Introducción}\label{sec:intro}
-Desde el inicio de la mecanica cuantica la gente se dio cuenta que analizar sistemas era muy 
-dificil para cualquier cosa que no fuera algo sencillo. Las herramientas computacionales 
-permiten analizar sistemas más complejos, aumentando nuestro conocimiento de la mecanica cuantica.
+La mecanica cuántica es una de las ramas de la física más relevantes hoy en día. 
+%cosas sobre cuantica
+El estudio de sistemas cuánticos utilizando herramientas computacionales introduce una 
+visión totalmente nueva sobre estos, abriendo todo un nuevo paradigma de estudio. Por un 
+lado, permite ver la evolución de sistemas más complejos, sin necesidad de solucionar 
+analíticamente las ecuaciones que los describen. Por otro lado, es posible implementar 
+nuevos algoritmos que incluyan correción de efectos cuánticos.
+
+Dentro de los métodos computacionales para simular sistemas físicos, podemos destacar dos 
+que a primera vista pueden ser apropiados para la simulación de mécanica cuántica: 
+Autómatas Celulares y Lattice Boltzmann. El motivo por el cuál destacan se debe a la 
+naturaleza de su estructura: No se basan en comportamientos deterministas de particulas, 
+sino en la evolución de un sistema en la que cada punto del espacio interactúa de acuerdo 
+con alguna regla con sus vecinos, similar a la evolución de los sistemas cuánticos.
+
 \subsection{Autómata Celular}
-Un autómata celular es básicamente una matriz y un conjunto de reglas de evolución.
+El método de autómatas celulares, desarrollado en (cuando? por quien?), consta en un 
+arreglo de celdas, y un conjunto de reglas de evolución, que relacionan el comportamiento
+de cada celda basado en sus vecinas. Este método resulta especialmente útil para modelar 
+sistemas difusivos, o %bla bla bla
 
 \subsection{Lattice Boltzmann}
-A partir de la dinámica de gases es posible derivar una relación entre las variables macroscopicas
-de un fluido y una función dada en el punto, $f_i(\textbf{x}, t)$ donde
+El método de Lattice Boltzmann nace de la dinámica de fluidos y de la ecuación de 
+Boltzmann, que, al ser discretizada, permite obtener una ecuación que depende 
+exclusivamente de 
+Encontramos entonces una función de parámetros discretos $f$, que se relaciona con las 
+variables macroscópicas del sistema mediante las relaciones 
 
 \begin{equation*}
     \rho(\textbf{x}, t) = \sum_i f_i(\textbf{x}, t)
 \end{equation*}
 
 \begin{equation*}
-    \rho\textbf{u}(\textbf{x}, t) = \sum_i \textbf{c}_i f_i(\textbf{x}, t)
+    \rho\textbf{u}(\textbf{x}, t) = \sum_i \vec{v_i} f_i(\textbf{x}, t)
 \end{equation*}
 
-Discretizando la ecuación de Lattice Boltzmann para el espacio y el tiempo tenemos
+Donde el subíndice $i$ pertenece a un conjunto de direcciones discreto, en las cuales se 
+puede propagar la información.
 
-\begin{equation*}
-    f_i(\textbf{x}+\textbf{c}_i \Delta t, t+\Delta t) = f_i(\textbf{x}, t) + \Omega_i(\textbf{x}, t)
-\end{equation*}
+
+\begin{equation}\label{eq:LB}
+    f_i(\textbf{x}+\vec{c_i} \Delta t, t+\Delta t) = f_i(\textbf{x}, t) + \Omega_i(\textbf{x}, t)
+\end{equation}
 
 Donde el operador de colisión $\Omega_i$ más simple es el de Bhatnagar-Gross-Krook (BGK), 
 definido como 
 
 \begin{equation*}
-    \Omega_i = \frac{f_i-f_i^{eq}}{\tau}\Delta t
+    \Omega_i = -\frac{f_i-f_i^{eq}}{\tau}\Delta t
 \end{equation*}
 
 Donde la función de equilibrio depende del sistema que se quiera modelar (fluidos, difusión, etc.).
 
 
 \section{Metodos para simular MC}
+Se han propuesto diferentes acercamientos a la simulación de dinámica cuántica basados en 
+autómatas celulares y la ecuación de Lattice Boltzmann. El primero en ser propuesto fue el 
+de Sauro Succi en 1993, basado en las relaciones entre la ecuación de Dirac en su forma 
+Majorana y la ecuación de Lattice Boltzmann para fluidos. Posteriormente, en 1996, David 
+Meyer propone un enfoque diferente, partiendo de la relación entre la ecuación de difusión 
+y la ecuación de Schrödinger para una partícula libre. Basado en esto, busca la regla de 
+evolución temporal de su sistema basado en la imagen de Schrödinger, que plantea que la 
+evolución temporal de un sisema esta dada por
 
-\subsection{Meyer}
+\begin{equation}\label{eq:sch_im}
+    |\psi(x,t)\rangle = \hat{U}(t, t=0)|\psi(x, t=0)\rangle
+\end{equation}
+
+Donde $\hat{U}(t, t=0)$ es el operador de evolución temporal, que es unitario, homogéneo y 
+local. Por lo tanto, en una dimensión puede ser escrito como una matriz de la forma
+
+\begin{equation*}
+    \hat{U} = 
+    \begin{bmatrix}
+        \ddots & \\
+        & a & b & c \\
+        & & d & e & f \\
+        & & & & & \ddots 
+    \end{bmatrix}
+\end{equation*}
+
+Sin embargo, Meyer demuestra que no es posible construir un autómata celular no trivial, 
+local, homogéneo y unitario en una sola dimensión \cite{meyer}por lo que relaja la 
+condición de homogeneidad, manteniendo intactas las condiciones de unitareidad y localidad.
+Esto convierte al operador $\hat{U}$ invariante bajo dos pasos; que quiere decir que 
+$T^{-2}UT^2=U$, donde $T$ es el operador de traslación espacial.
+
 \subsubsection{Automata Celular}
- Para nuestro 
-caso tomamos una matriz unidimensional, y usando la ecuación de Schrödinger encontramos la 
-regla de evolución 
-\begin{equation}\label{eq:evolution}
-    \phi_{t+1} = matriz*\phi_t
+ Para nuestro caso tomamos una matriz unidimensional, y usando la ecuación de Schrödinger 
+ encontramos la regla de evolución \cite{meyer}
+
+ \begin{equation}\label{eq:evolution}
+    \left[ 
+    \begin{matrix}
+        \psi_{t+1}(x-1) \\
+        \psi_{t+1}(x)
+    \end{matrix}
+    \right] = 
+    \begin{bmatrix}
+        i\sin\theta & \cos\theta \\
+        \cos\theta & i\sin\theta
+    \end{bmatrix}
+    \left[ 
+    \begin{matrix}
+        \psi_{t}(x-1) \\
+        \psi_{t}(x)
+    \end{matrix}
+    \right]
 \end{equation}
 \subsubsection{Lattice Gas}
 Extendiendo nuestro sistema podemos hallar una analogía con un automata celular de difusión
 
-\subsection{Succi}
- Para nuestro caso, la función de equilibrio es
-\begin{equation*}
-	f_i^{eq} = nofuckingidea
-\end{equation*}
+
 
 \section{Simulación}
+\subsection{Autómata}
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figs/x0.png}
+    \caption{amplitud no nula en x=0}
+    \label{fig:x0}
+\end{figure*}
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figs/x1516.png}
+    \caption{amplitud no nula en x=15, 16}
+    \label{fig:x15}
+\end{figure*}
+
+
+\subsection{Lattice Gas}
+
+A partir de la regla de evolucion \ref{eq:evolution}, podemos llegar a una ecuación de la 
+forma 
+\begin{equation}\label{eq:QLG}
+    \psi_i(x+\vec{v_i}\Delta t, t +\Delta t) = \psi_i(x,t) + (\cos\theta -1)\psi_i(x,t)
+    + i\sin\theta\psi_i(x+\vec{v_i}\Delta t,t)
+\end{equation}
+
+Vemos que corresponde a la ecuación de Lattice Boltzmann, con un operador de colisión 
+
+\begin{equation*}
+    \Omega_i = -\frac{\psi_i(x,t)-\cos\theta\psi_i(x,t)
+    -\sin\theta\psi_i(x+\vec{v_i}\Delta t,t)}{\tau}\Delta t
+\end{equation*}
+
+Si $\Delta t = \tau$, y por lo tanto una función de equilibrio dada por
+
+\begin{equation*}
+    f_i^{eq}(x,t)=\cos\theta\psi_i(x,t)+i\sin\theta\psi_i(x+\vec{v_i}\Delta t,t)
+\end{equation*}
+%hay que explicar v_i
+A partir de esto podemos construir un modelo de Lattice Boltzmann que permita verificar el
+comportamiento de un sistema cuya solución analítica sea conocida, y validar así el uso de 
+este método para el estudio de la dinámica cuántica. Para este fin tomamos un paquete 
+gaussiano con un momento dado, cuya función de onda está dada por
+
+\begin{equation*}
+    \psi(x,t=0)=\frac{e^{-ikx}}{\sigma\sqrt{2\pi}}\exp{\left(-\frac{1}{2}\left(
+        \frac{x-\mu}{\sigma}\right)^2\right)}
+\end{equation*}
+
+Esperamos que 
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figs/latticegas.png}
+    \caption{evlucion paquete gaussiano}
+    \label{fig:gauss}
+\end{figure*}
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figs/new.png}
+    \caption{desvación estándar en funcion del tiempo}
+    \label{fig:sigma}
+\end{figure*}
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figs/mass.png}
+    \caption{desvación estándar en funcion del tiempo para diferentes masas}
+    \label{fig:mass}
+\end{figure*}
+
+
 \section{Resultados}
 \section{Conclusión}
-
-
+\nocite{*}
+\printbibliography
 \end{document}
