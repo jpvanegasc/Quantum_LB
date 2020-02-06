@@ -17,14 +17,28 @@
 
 \begin{document}
 \maketitle
-\section{Introducción}\label{sec:intro}
-La mecanica cuántica es una de las ramas de la física más relevantes hoy en día. 
-%cosas sobre cuantica
-El estudio de sistemas cuánticos utilizando herramientas computacionales introduce una 
-visión totalmente nueva sobre estos, abriendo todo un nuevo paradigma de estudio. Por un 
-lado, permite ver la evolución de sistemas más complejos, sin necesidad de solucionar 
-analíticamente las ecuaciones que los describen. Por otro lado, es posible implementar 
-nuevos algoritmos que incluyan correción de efectos cuánticos.
+\section{Introducción}
+La mecanica cuántica es una de las ramas de la física más relevantes hoy en día, con un 
+número oimportante de físicos trabajando en ella hoy en día. Gracias a ella es posible 
+comprender el funcionamiento de la naturaleza a escalas pequeñas, y con eso, estudiar 
+sistemas cruciales para nosotros, desde cómo funciona el interior de las estrellas, hasta 
+el comportamiento de proteínas esenciales para la vida. Una diferencia crucial entre la 
+descripción clásica del mundo y la cuántica es la falta de determinismo, que obliga a 
+realizar un estudio basado en estadísticas y probabilidades. Es por esto que encontramos 
+elementos como la función de onda, que es sí misma no representa ninguna realidad física, 
+pero al realizar diferentes operaciones sobre ella podemos hallar los valores esperados 
+para diferentes observables.
+
+Debido a la complejidad matemática que trae consigo esta descripción de la realidad, pocos 
+sistemas tienen una solución analítica. Dentro del gran conjunto de sistemas no resueltos 
+a escalas atómicas podría yacer la clave para un entendimiento más profundo de la realidad,
+por lo que su estudio resulta fundamental. El estudio de estos sistemas utilizando 
+herramientas computacionales introduce una visión totalmente nueva sobre estos, abriendo 
+todo un nuevo paradigma de estudio. Por un lado, permite ver la evolución de estos 
+sistemas más complejos, sin necesidad de solucionar analíticamente las ecuaciones que los 
+describen, permitiendo avanzar en investigaciones claves para el desarrollo de la ciencia. 
+Por otro lado, es posible implementar nuevos algoritmos que incluyan correción de efectos 
+cuánticos, o incluso, desarrollar algoritmos para computación cuántica.
 
 Dentro de los métodos computacionales para simular sistemas físicos, podemos destacar dos 
 que a primera vista pueden ser apropiados para la simulación de mécanica cuántica: 
@@ -34,43 +48,48 @@ sino en la evolución de un sistema en la que cada punto del espacio interactúa
 con alguna regla con sus vecinos, similar a la evolución de los sistemas cuánticos.
 
 \subsection{Autómata Celular}
-El método de autómatas celulares, desarrollado en (cuando? por quien?), consta en un 
-arreglo de celdas, y un conjunto de reglas de evolución, que relacionan el comportamiento
-de cada celda basado en sus vecinas. Este método resulta especialmente útil para modelar 
-sistemas difusivos, o %bla bla bla
+El método de autómatas celulares, desarrollado en 1940 por Stanislaw Ulam y John von 
+Neumann, consta en un arreglo de celdas y un conjunto de reglas de evolución, que 
+relacionan el comportamiento de cada celda basado en sus vecinas. Este método resulta 
+especialmente útil para modelar sistemas difusivos, biofísicos, químicos o incluso 
+sistemas computacionales en sí mismo. Dentro de los modelos de autómatas celulares más 
+destacados vale la pena mencionar el juego de la vida, de John Conway.
 
 \subsection{Lattice Boltzmann}
 El método de Lattice Boltzmann nace de la dinámica de fluidos y de la ecuación de 
 Boltzmann, que, al ser discretizada, permite obtener una ecuación que depende 
-exclusivamente de 
-Encontramos entonces una función de parámetros discretos $f$, que se relaciona con las 
-variables macroscópicas del sistema mediante las relaciones 
+exclusivamente del comportamiento local del sistema, facilitando su implementación 
+computacional en serie o en paralelo, haciéndolo un método muy eficiente en cuanto a 
+tiempo de cómputo. Para esto partimos primero de una función de parámetros discretos $f$, 
+que se relaciona con las variables macroscópicas del sistema mediante las relaciones 
 
 \begin{equation*}
     \rho(\textbf{x}, t) = \sum_i f_i(\textbf{x}, t)
 \end{equation*}
 
 \begin{equation*}
-    \rho\textbf{u}(\textbf{x}, t) = \sum_i \vec{v_i} f_i(\textbf{x}, t)
+    \rho\vec{u}(\textbf{x}, t) = \sum_i \vec{v_i} f_i(\textbf{x}, t)
 \end{equation*}
 
-Donde el subíndice $i$ pertenece a un conjunto de direcciones discreto, en las cuales se 
-puede propagar la información.
-
+Donde $\rho$ y $\vec{u}$ son la densidad de masa y el campo de velocidades del fluido (o 
+su equivalente dependiendo del sistema que se simule). Por otro lado, el subíndice $i$ 
+pertenece a un conjunto de direcciones discreto, en las cuales se propaga la información.
+Al discretizar la ecuación de Boltzmann encontramos que esta función obedece la ecuación
 
 \begin{equation}\label{eq:LB}
     f_i(\textbf{x}+\vec{c_i} \Delta t, t+\Delta t) = f_i(\textbf{x}, t) + \Omega_i(\textbf{x}, t)
 \end{equation}
 
-Donde el operador de colisión $\Omega_i$ más simple es el de Bhatnagar-Gross-Krook (BGK), 
-definido como 
+En donde se ve la localidad del sistema, dependiendo únicamente de los puntos vecinos y de 
+un operador colisión $\Omega$. Utilizando la aproximación de Bhatnagar-Gross-Krook (BGK), 
+tenemos que el operador colisión está dado por 
 
 \begin{equation*}
     \Omega_i = -\frac{f_i-f_i^{eq}}{\tau}\Delta t
 \end{equation*}
 
-Donde la función de equilibrio depende del sistema que se quiera modelar (fluidos, difusión, etc.).
-
+Donde la función de equilibrio depende del sistema que se quiera modelar, y el tiempo de 
+relajación $\tau$ generalmente se toma como $\tau=\Delta t$.
 
 \section{Metodos para simular MC}
 Se han propuesto diferentes acercamientos a la simulación de dinámica cuántica basados en 
