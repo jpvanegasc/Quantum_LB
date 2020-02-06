@@ -125,8 +125,8 @@ Esto convierte al operador $\hat{U}$ invariante bajo dos pasos; que quiere decir
 $T^{-2}UT^2=U$, donde $T$ es el operador de traslación espacial.
 
 \subsubsection{Automata Celular}
- Para nuestro caso tomamos una matriz unidimensional, y usando la ecuación de Schrödinger 
- encontramos la regla de evolución \cite{meyer}
+Partiendo de esta redefinición del operador $\hat{U}$, podemos hallar la regla de 
+evolución del autómata, dada por:
 
  \begin{equation}\label{eq:evolution}
     \left[ 
@@ -146,13 +146,24 @@ $T^{-2}UT^2=U$, donde $T$ es el operador de traslación espacial.
     \end{matrix}
     \right]
 \end{equation}
+
+Sin embargo, dado que el operador es invariante bajo dos pasos es necesario dividir la 
+evolución en dos bloques: Colisión iniciando por pares de celdas impares seguido por un 
+paso de addvección, y luego colisión de pares de celdas pares para terminar con un último 
+paso de addvección. Este modelo garantiza que la evolución del sistema no conste solamente 
+de interacciones entre pares de celdas que no interactúan con las demás, en lo que Meyer 
+denomina el modelo de "checkerboard".
+
 \subsubsection{Lattice Gas}
-Extendiendo nuestro sistema podemos hallar una analogía con un automata celular de difusión
-
-
+Extendiendo nuestro sistema podemos hallar una analogía con un automata de partículas para
+difusión, en donde los contenidos de las celdas pasan a representar partículas en sí, 
+en analogía con un gas. Basados de la regla de evolución para el autómata celular, podemos 
+hallar la regla de evolución para este gas de partículas.
 
 \section{Simulación}
 \subsection{Autómata}
+Usando la regla \ref{eq:evolution}, y tomando un espacio de Hilbert $H$ con una base 
+discreta $|x\rangle$, encontramos las siguientes gráficas bonitas: 
 
 \begin{figure*}[h]
     \centering
@@ -168,10 +179,11 @@ Extendiendo nuestro sistema podemos hallar una analogía con un automata celular
     \label{fig:x15}
 \end{figure*}
 
+Donde el contenido de la celda representa la probabilidad de encontrar una partícula en 
+esa posición. %Por lo tanto vemos que todo funciona bien
 
 \subsection{Lattice Gas}
-
-A partir de la regla de evolucion \ref{eq:evolution}, podemos llegar a una ecuación de la 
+A partir de la regla de evolución \ref{eq:evolution}, podemos llegar a una ecuación de la 
 forma 
 \begin{equation}\label{eq:QLG}
     \psi_i(x+\vec{v_i}\Delta t, t +\Delta t) = \psi_i(x,t) + (\cos\theta -1)\psi_i(x,t)
@@ -185,7 +197,7 @@ Vemos que corresponde a la ecuación de Lattice Boltzmann, con un operador de co
     -\sin\theta\psi_i(x+\vec{v_i}\Delta t,t)}{\tau}\Delta t
 \end{equation*}
 
-Si $\Delta t = \tau$, y por lo tanto una función de equilibrio dada por
+si $\Delta t = \tau$, y por lo tanto una función de equilibrio dada por
 
 \begin{equation*}
     f_i^{eq}(x,t)=\cos\theta\psi_i(x,t)+i\sin\theta\psi_i(x+\vec{v_i}\Delta t,t)
@@ -201,12 +213,13 @@ gaussiano con un momento dado, cuya función de onda está dada por
         \frac{x-\mu}{\sigma}\right)^2\right)}
 \end{equation*}
 
-Esperamos que 
+Esperamos que el paquete se mueva a la derecha y la desviación estandar aumente de manera 
+cuadratica
 
 \begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{figs/latticegas.png}
-    \caption{evlucion paquete gaussiano}
+    \caption{evolución paquete gaussiano}
     \label{fig:gauss}
 \end{figure*}
 
@@ -217,6 +230,8 @@ Esperamos que
     \label{fig:sigma}
 \end{figure*}
 
+Vemos que da muy bien
+
 \begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{figs/mass.png}
@@ -224,9 +239,19 @@ Esperamos que
     \label{fig:mass}
 \end{figure*}
 
+Vemos que el comportamiento de la particula depende de su masa
 
-\section{Resultados}
 \section{Conclusión}
+\begin{itemize}
+    \item Es posible utilizar métodos computacionales para modelar sistemas cuánticos
+    \item Observamos el comportamiento esperado para el autómata celular
+    \item Vemos que el paquete gaussiano evoluciona de acuerdo a lo predicho
+    \item La desviación estándar crece de forma cuadrática, pero presenta una oscilación, 
+    debida posiblemente a errores numéricos o a las aproximaciones realizadas
+    \item Vemos que la forma en la que el paquete gaussiano evoluciona depende de la masa 
+    de la partícula
+\end{itemize}
+
 \nocite{*}
 \printbibliography
 \end{document}
