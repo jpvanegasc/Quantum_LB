@@ -1,4 +1,4 @@
-\documentclass[12pts, letterpaper, twocolumn]{article}
+\documentclass[12pts, letterpaper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish, es-tabla]{babel}
 \usepackage{csquotes} %babel asked for this
@@ -11,7 +11,7 @@
 \usepackage{biblatex}
 \addbibresource{ref.bib}
 
-\title{Simulación de Dinámica Cuántica usando LB}
+\title{Simulación de Dinámica Cuántica utilizando Lattice Boltzmann}
 \author{Juan B. Benavides y Juan P. Vanegas}
 \date{Febrero de 2020}
 
@@ -28,7 +28,7 @@ realizar un estudio basado en estadísticas y probabilidades. Es por esto que en
 elementos como la función de onda, que en sí misma no representa ninguna realidad física, 
 pero al realizar diferentes operaciones sobre ella podemos hallar los valores esperados 
 para diferentes observables.
-
+\\ \\
 Debido a la complejidad matemática que trae consigo esta descripción de la realidad, pocos 
 sistemas tienen una solución analítica. Dentro del gran conjunto de sistemas no resueltos 
 a escalas atómicas podría yacer la clave para un entendimiento más profundo de la realidad,
@@ -39,7 +39,7 @@ sistemas más complejos, sin necesidad de solucionar analíticamente las ecuacio
 describen, permitiendo avanzar en investigaciones claves para el desarrollo de la ciencia. 
 Por otro lado, es posible implementar nuevos algoritmos que incluyan correción de efectos 
 cuánticos, o incluso, desarrollar algoritmos para computación cuántica.
-
+\\ \\
 Dentro de los métodos computacionales para simular sistemas físicos, podemos destacar dos 
 que a primera vista pueden ser apropiados para la simulación de mécanica cuántica: 
 Autómatas Celulares y Lattice Boltzmann. El motivo por el cuál destacan se debe a la 
@@ -53,7 +53,7 @@ Neumann, consta en un arreglo de celdas y un conjunto de reglas de evolución, q
 relacionan el comportamiento de cada celda basado en sus vecinas. Este método resulta 
 especialmente útil para modelar sistemas difusivos, biofísicos, químicos o incluso 
 sistemas computacionales en sí mismo. Dentro de los modelos de autómatas celulares más 
-destacados vale la pena mencionar el juego de la vida, de John Conway.
+destacados vale la pena mencionar el juego de la vida de John Conway.
 
 \subsection{Lattice Boltzmann}
 El método de Lattice Boltzmann nace de la dinámica de fluidos y de la ecuación de 
@@ -91,7 +91,7 @@ tenemos que el operador colisión está dado por
 Donde la función de equilibrio depende del sistema que se quiera modelar, y el tiempo de 
 relajación $\tau$ generalmente se toma como $\tau=\Delta t$.
 
-\section{Metodos para simular MC}
+\section{Métodos usados para simular Mecánica Cuántica}
 Se han propuesto diferentes acercamientos a la simulación de dinámica cuántica basados en 
 autómatas celulares y la ecuación de Lattice Boltzmann. El primero en ser propuesto fue el 
 de Sauro Succi en 1993, basado en las relaciones entre la ecuación de Dirac en su forma 
@@ -124,7 +124,7 @@ condición de homogeneidad, manteniendo intactas las condiciones de unitareidad 
 Esto convierte al operador $\hat{U}$ invariante bajo dos pasos; que quiere decir que 
 $T^{-2}UT^2=U$, donde $T$ es el operador de traslación espacial.
 
-\subsubsection{Automata Celular}
+\subsubsection{Autómata Celular}
 Partiendo de esta redefinición del operador $\hat{U}$, podemos hallar la regla de 
 evolución del autómata, dada por:
 
@@ -167,20 +167,21 @@ discreta $|x\rangle$, encontramos las siguientes gráficas bonitas:
 
 \begin{figure*}[h]
     \centering
-    \includegraphics[width=\textwidth]{figs/x0.png}
-    \caption{amplitud no nula en x=0}
+    \includegraphics[width=0.7\textwidth]{figs/x0.png}
+    \caption{Evolución para una amplitud no nula en $x=0$}
     \label{fig:x0}
 \end{figure*}
 
 \begin{figure*}[h]
     \centering
-    \includegraphics[width=\textwidth]{figs/x1516.png}
-    \caption{amplitud no nula en x=15, 16}
+    \includegraphics[width=0.7\textwidth]{figs/x1516.png}
+    \caption{Evolución para una amplitud no nula en $x=15,16$}
     \label{fig:x15}
 \end{figure*}
 
 Donde el contenido de la celda representa la probabilidad de encontrar una partícula en 
-esa posición. %Por lo tanto vemos que todo funciona bien
+esa posición. Vemos que el comportamiento es el esperado, con una difusión progresiva por 
+un lado, y con un movimiento de la amplitud máxima.
 
 \subsection{Lattice Gas}
 A partir de la regla de evolución \ref{eq:evolution}, podemos llegar a una ecuación de la 
@@ -213,35 +214,57 @@ gaussiano con un momento dado, cuya función de onda está dada por
         \frac{x-\mu}{\sigma}\right)^2\right)}
 \end{equation*}
 
-Esperamos que el paquete se mueva a la derecha y la desviación estandar aumente de manera 
-cuadratica
+Donde la masa de la partícula está relacionada con el ángulo  mediante $m=\tan{\theta}$. 
+El comportamiento esperado para un paquete gaussiano con estas características consta de 
+dos partes: Por un lado, esperamos que la media siga un movimiento con velocidad 
+constante, y que la desviación estándar aumente con el cuadrado del tiempo, obedeciendo 
+las relaciones
+
+\begin{equation*}
+    \mu(t)=\mu_0+(km)t
+\end{equation*}
+
+\begin{equation*}
+    \sigma^2(t)=\frac{t^2}{4m^2\sigma_0^2} + \sigma_0^2
+\end{equation*}
+
+Para esto tomamos un Lattice de 2048 celdas, iniciando un paquete gaussiano con media 
+$\mu=1024$ y desviación estándar $\sigma^2=50$, una masa de $m=0.2$ y una velocidad de 
+$v=0.1$. Los resultados para la evolución de la función de densidad de probabilidad, que 
+de acuerdo a los postulados de la mecánica cuántica corresponde a $f_P(x)=|\psi(x)|^2$, y 
+del cambio en la desviación estándar se encuantran en las figuras \ref{fig:gauss} y 
+\ref{fig:sigma}.
 
 \begin{figure*}[h]
     \centering
-    \includegraphics[width=\textwidth]{figs/latticegas.png}
-    \caption{evolución paquete gaussiano}
+    \includegraphics[width=0.7\textwidth]{figs/latticegas.png}
+    \caption{Evolución del paquete gaussiano para $t=0, 1000, 2000$ pasos de tiempo.}
     \label{fig:gauss}
 \end{figure*}
 
 \begin{figure*}[h]
     \centering
-    \includegraphics[width=\textwidth]{figs/new.png}
-    \caption{desvación estándar en funcion del tiempo}
+    \includegraphics[width=0.7\textwidth]{figs/new.png}
+    \caption{Evolución de la desvación estándar en funcion del tiempo.}
     \label{fig:sigma}
 \end{figure*}
 
-Vemos que da muy bien
+Podemos comprobar que el comportamiento del paquete gaussiano corresponde al esperado, por 
+lo que procedemos a variar la masa de la partícula. Estos resultados se encuentran 
+consignados en la figura \ref{fig:mass}.
 
 \begin{figure*}[h]
     \centering
-    \includegraphics[width=\textwidth]{figs/mass.png}
-    \caption{desvación estándar en funcion del tiempo para diferentes masas}
+    \includegraphics[width=0.7\textwidth]{figs/mass.png}
+    \caption{Cambio de la desvación estándar en funcion del tiempo para diferentes masas.}
     \label{fig:mass}
 \end{figure*}
 
-Vemos que el comportamiento de la particula depende de su masa
+Podemos ver que el comportamiento del paquete gaussiano corresponde al esperado 
+analíticamente, validando así el modelo de Lattice Boltzmann para simular sistemas 
+cuánticos.
 
-\section{Conclusión}
+\section{Conclusiones}
 \begin{itemize}
     \item Es posible utilizar métodos computacionales para modelar sistemas cuánticos
     \item Observamos el comportamiento esperado para el autómata celular
